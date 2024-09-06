@@ -619,7 +619,7 @@ require('lazy').setup({
         --
 
         lua_ls = {
-          -- cmd = {...},
+           cmd = { '/run/current-system/sw/bin/lua-language-server' },
           -- filetypes = { ...},
           -- capabilities = {},
           settings = {
