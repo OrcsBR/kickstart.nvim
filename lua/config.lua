@@ -22,43 +22,43 @@
 
 What is Kickstart?
 
-  Kickstart.nvim is *not* a distribution.
+Kickstart.nvim is *not* a distribution.
 
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
+Kickstart.nvim is a starting point for your own configuration.
+  The goal is that you can read every line of code, top-to-bottom, understand
+  what your configuration is doing, and modify it to suit your needs.
 
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
+  Once you've done that, you can start exploring, configuring and tinkering to
+  make Neovim your own! That might mean leaving Kickstart just the way it is for a while
+  or immediately breaking it into modular pieces. It's up to you!
 
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
+  If you don't know anything about Lua, I recommend taking some time to read through
+  a guide. One possible example which will only take 10-15 minutes:
+    - https://learnxinyminutes.com/docs/lua/
 
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
+  After understanding a bit more about Lua, you can use `:help lua-guide` as a
+  reference for how Neovim integrates Lua.
+  - :help lua-guide
+  - (or HTML version): https://neovim.io/doc/user/lua-guide.html
 
 Kickstart Guide:
 
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
+TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
 
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
+  If you don't know what this means, type the following:
+    - <escape key>
+    - :
+    - Tutor
+    - <enter key>
 
-    (If you already know the Neovim basics, you can skip this step.)
+  (If you already know the Neovim basics, you can skip this step.)
 
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
+Once you've completed that, you can continue working through **AND READING** the rest
+of the kickstart init.lua.
 
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
+Next, run AND READ `:help`.
+  This will open up a help window with some basic information
+  about reading, navigating and searching the builtin help documentation.
 
     This should be the first place you go to look when you're stuck or confused
     with something. It's one of my favorite Neovim features.
@@ -157,9 +157,22 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Back and Forward on Buffers
+vim.keymap.set('n', '<M-[>', '<cmd>bprev<CR>')
+vim.keymap.set('n', '<M-]>', '<cmd>bnext<CR>')
+
+-- Concealing Links
+vim.opt.conceallevel = 0
+-- vim.opt.concealcursor = 'nc'
+
 -- Wiki.vim related settings
-vim.g.wiki_root = '~/wiki/'
+vim.g.wiki_root = '~/obsidian/wiki/'
 vim.keymap.set('n', '<leader>ow', '<cmd>WikiPages<CR>')
+
+-- Notational FZF Vim 
+vim.g.nv_search_paths = { '~/obsidian' }
+vim.keymap.set('n', '<leader>n', '<cmd>NV<CR>')
+vim.keymap.set('n', '<M-n>', '<cmd>NV<CR>')
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -235,20 +248,39 @@ require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   'lervag/wiki.vim', -- vimwiki replacement
-  'dyng/ctrlsf.vim',
-
+  'dyng/ctrlsf.vim', -- recommended in vimwiki docs, have to try it out
+  'alok/notational-fzf-vim', --Notational Velocity in (neo)vim
+  'junegunn/fzf', -- required by notational-fzf-vim above.
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
   --
   -- Use `opts = {}` to force a plugin to be loaded.
   --
-
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
   --
   -- See `:help gitsigns` to understand what the configuration keys do
+  {
+    'nvim-orgmode/org-bullets.nvim',
+    config = function()
+      require("org-bullets").setup({
+      concealcursor = false,
+      symbols = {
+        -- list symbol
+        list = "•",
+        -- headlines can be a list
+        headlines = { "◉", "○", "✸", "✿" },
+        checkboxes = {
+        half = { "", "@org.checkbox.halfchecked" },
+        done = { "✓", "@org.keyword.done" },
+        todo = { "˟", "@org.keyword.todo" },
+          },
+       },
+    })
+    end
+  },
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -262,16 +294,28 @@ require('lazy').setup({
     },
   },
   {
+  "zk-org/zk-nvim",
+  config = function()
+    require("zk").setup({
+          -- See Setup section below
+    picker = "telescope",
+    auto_attach = {
+      enabled = true,
+      filetypes = { "markdown" },
+      },
+    })
+    end
+  },
+  {
   'nvim-orgmode/orgmode',
   event = 'VeryLazy',
   ft = { 'org' },
   config = function()
     -- Setup orgmode
     require('orgmode').setup({
-      org_agenda_files = '~/Dropbox/org/**/*',
-      org_default_notes_file = '~/Dropbox/org/refile.org',
+      org_agenda_files = '~/obsidian/org/**/*',
+      org_default_notes_file = '~/obsidian/org/refile.org',
     })
-
     -- NOTE: If you are using nvim-treesitter with ~ensure_installed = "all"~ option
     -- add ~org~ to ignore_install
     -- require('nvim-treesitter.configs').setup({
@@ -841,6 +885,7 @@ require('lazy').setup({
           },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
+          { name = 'orgmode' },
           { name = 'path' },
         },
       }
