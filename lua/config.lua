@@ -167,12 +167,13 @@ vim.opt.conceallevel = 0
 
 -- Wiki.vim related settings
 vim.g.wiki_root = '~/obsidian/wiki/'
-vim.keymap.set('n', '<leader>ow', '<cmd>WikiPages<CR>')
+vim.keymap.set('n', '<leader>wo', '<cmd>WikiPages<CR>')
 
 -- Notational FZF Vim 
-vim.g.nv_search_paths = { '~/obsidian' }
+vim.g.nv_search_paths = { '~/obsidian/wiki', '~/obsidian/inbox', '~/obsidian/journals/', '~/obsidian/zettels/', '~/obsidian/working', '~/obsidian/to read', '~/obsidian/store', '~/obsidian/RFB', '~/obsidian/Readwise', '~/obsidian/notes', '~/obsidian/learning garden/', '~/obsidian/jur', '~/obsidian/booknotes', '~/obsidian/bookmarks', '~/obsidian/stash', './notes', './wiki' }
 vim.keymap.set('n', '<leader>n', '<cmd>NV<CR>')
 vim.keymap.set('n', '<M-n>', '<cmd>NV<CR>')
+-- vim.cmd('source ~/.config/nvim/plugged/notational-fzf.vim')
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
